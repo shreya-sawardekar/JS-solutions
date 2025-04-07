@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML Dialog on clicking an image</title>
+    <style>
+      img {
+        cursor: zoom-in;
+      }
+
+      dialog {
+        border-radius: 10px;
+        background: white;
+      }
+
+      dialog::backdrop {
+        backdrop-filter: blur(2px);
+      }
+
+      dialog img {
+        width: clamp(80%, auto, 100%);
+        max-height: 80vh;
+      }
+
+      dialog button {
+        display: block;
+        margin: 10px auto;
+        cursor: pointer;
+      }
+
+      dialog[open] {
+        animation: dialog-fade-in 0.3s ease-in-out;
+      }
+
+      @keyframes dialog-fade-in {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <img src="https://placecats.com/300/300" />
+
+    <script>
+      const isDesktop = window.matchMedia("(hover:hover)").matches;
+      if (isDesktop) {
+        const images = document.querySelectorAll("img");
+        const dialog = document.createElement("dialog");
+        const img = document.createElement("img");
+        const close = document.createElement("button");
+
+        close.textContent = "Click here to close or hit `esc`";
+        close.addEventListener("click", () => dialog.close());
+
+        dialog.appendChild(img);
+        dialog.appendChild(close);
+        document.body.appendChild(dialog);
+
+        images.forEach((image) => {
+          image.addEventListener("click", () => {
+            img.src = image.src;
+            dialog.showModal();
+          });
+        });
+
+        dialog.addEventListener("clicl", (event) => {
+          const dialogDimensions = dialog.getBoundingClientRect();
+          if (
+            event.clientX < dialogDimensions.left ||
+            event.clientX > dialogDimensions.right ||
+            event.clientY < dialogDimensions.top ||
+            event.clientY > dialogDimensions.bottom
+          ) {
+            dialog.close();
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
